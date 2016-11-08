@@ -1,0 +1,86 @@
+scope: alfdb
+name: LBRUPALFAC001
+
+restapi:
+  listen: 0.0.0.0:8008
+  connect_address: LBRUPALFAC001-postgresql:8008
+
+consul:
+  host: consul:8500
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    synchronous_mode: false
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        synchronous_commit: on
+        max_replication_slots: 1
+        wal_level: logical
+        max_connections: 375
+#        shared_buffers: 2048MB
+#        work_mem: 5592kB
+#        effective_cache_size: 6144MB
+#        maintenance_work_mem: 512MB
+        default_statistics_target: 100
+        max_wal_senders: 2
+        min_wal_size: 1GB
+        max_wal_size: 2GB
+        checkpoint_completion_target: 0.7
+        wal_buffers: 16MB
+        lc_messages: en_US.utf8
+        lc_monetary: en_US.utf8
+        lc_numeric: en_US.utf8
+        lc_time: en_US.utf8
+
+  initdb:  # Note: It needs to be a list (some options need values, others are switches)
+    - encoding: UTF8
+    - data-checksums
+
+  pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
+#    - host test test 0.0.0.0/0 md5
+#    - host test backup 0.0.0.0/0 md5
+    - host replication backup 0.0.0.0/0 md5
+    - host replication replicator 0.0.0.0/0 md5
+    - host all postgres 0.0.0.0/0 md5
+
+  # Some additional users users which needs to be created after initializing new cluster
+#  users:
+#    test:
+#      password: test
+#      options:
+#        - createdb
+#    backup:
+#      password: backup
+#      options:
+#        - superuser
+#        - replication
+
+# Does not get called?
+# post_init: /post_init.py
+
+postgresql:
+  listen: 0.0.0.0:5432
+  connect_address: LBRUPALFAC001-postgresql:5432
+  data_dir: /var/lib/postgresql/data/PGDATA
+  pgpass: /tmp/pgpass
+  authentication:
+    replication:
+      username: replicator
+      password: replicator
+    superuser:
+      username: postgres
+      password: postgres
+  parameters:
+    unix_socket_directories: '.'
+    shared_preload_libraries: pg_stat_statements
+tags:
+    nofailover: false
+    noloadbalance: false
+    clonefrom: false
+    nosync: false

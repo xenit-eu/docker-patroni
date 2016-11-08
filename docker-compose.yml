@@ -1,0 +1,19 @@
+version: '2.2'
+
+services:
+  postgresql:
+    image: ${DOCKER_IMAGE}
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    - ./config:/config
+    ports:
+    - ${DOCKER_IP:-127.0.0.1}::5432
+    environment:
+    - PGDATA=/var/lib/postgresql/data/PGDATA
+
+  consul:
+    image: hub.xenit.eu/consul
+    command: agent -data-dir /data -server -bootstrap -client 0.0.0.0
+
+volumes:
+  postgres_data:

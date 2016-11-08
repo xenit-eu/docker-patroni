@@ -1,0 +1,1 @@
+{dcs_api: 'consul://consul:8500', namespace: /service/}
