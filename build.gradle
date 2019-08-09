@@ -12,22 +12,24 @@ wrapper {
 
 apply plugin: 'java'
 
+def junit_version = "5.5.1"
+def pg_version = "11.4"
+def patroni_version = '1.5.6'
+def patroni_tgz = "patroni_v${patroni_version}.tgz"
+
 dependencies {
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.1'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
     testCompile group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
-    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.5.1')
-    testRuntime('org.junit.vintage:junit-vintage-engine:5.5.1')
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junit_version}")
+    testRuntime("org.junit.vintage:junit-vintage-engine:${junit_version}")
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-def patroni_version = '1.5.6'
-def patroni_tgz = "patroni_v${patroni_version}.tgz"
-
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 task createDockerFile(type: Dockerfile){
-    from 'xeniteu/postgres:11.4'
+    from "xeniteu/postgres:${pg_version}"
     copyFile    'docker-entrypoint.sh', '/'
     runCommand  "apt-get update && apt-get install -y python3-pip python3-dev g++ curl musl-dev postgresql-server-dev-10 postgresql-common gosu && " +
                 "ln -sf /usr/bin/python3 /usr/bin/python && " +
@@ -57,8 +59,21 @@ task copyEntrypoint(type: Copy){
 dockerFile {
     dockerFile = createDockerFile.destFile
     dockerBuild {
-        repository = 'hub.xenit.eu/patroni'
+        repository = 'xeniteu/postgres-patroni'
+        tags = ["${pg_version}-patroni-${patroni_version}"]
+        automaticTags = false
         automaticTags = true
+    }
+}
+
+docker {
+    if (System.getenv("DOCKER_USER") != null) {
+        registryCredentials {
+            username = System.getenv("DOCKER_USER")
+            password = System.getenv("DOCKER_PASSWORD")
+        }
+    } else {
+        logger.info "using default credentials"
     }
 }
 

@@ -10,8 +10,6 @@ jdk:
 services:
   - docker
 
-install: ./gradlew assemble -i
-
 script:
   - ./gradlew test -i -PbuildNumber="$TRAVIS_BUILD_NUMBER" -PgitBranch="$TRAVIS_BRANCH"
   - if [ "$TRAVIS_BRANCH" = "master" ]; then ./gradlew pushDockerImage; fi
