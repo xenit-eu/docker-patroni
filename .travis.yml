@@ -1,0 +1,25 @@
+language: java
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+jdk:
+  - oraclejdk8
+
+services:
+  - docker
+
+install: ./gradlew assemble -i
+
+script:
+  - ./gradlew test -i -PbuildNumber="$TRAVIS_BUILD_NUMBER" -PgitBranch="$TRAVIS_BRANCH"
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then ./gradlew pushDockerImage; fi
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
