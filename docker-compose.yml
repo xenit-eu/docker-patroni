@@ -7,7 +7,7 @@ services:
     - postgres_data:/var/lib/postgresql/data
     - ./config:/config
     ports:
-    - 0.0.0.0::5432
+    - ${DOCKER_IP:-0.0.0.0}::5432
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
 
