@@ -12,8 +12,9 @@ services:
     - PGDATA=/var/lib/postgresql/data/PGDATA
 
   consul:
-    image: hub.xenit.eu/consul
-    command: agent -data-dir /data -server -bootstrap -client 0.0.0.0
+    image: consul:1.5.3
+#    image: hub.xenit.eu/consul
+    command: agent -data-dir /consul/data -server -bootstrap -client 0.0.0.0
 
 volumes:
   postgres_data:
