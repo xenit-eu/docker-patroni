@@ -3,7 +3,7 @@
 - [X] Update components
 - [X] Add license
 - [ ] Update README
-- [ ] Extend with High Availability setup
+- [X] Extend with High Availability setup
 - [ ] Add tests for the features to be used in production
 
 ---

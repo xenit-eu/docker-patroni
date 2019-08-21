@@ -1,9 +1,9 @@
 scope: alfdb
-name: LBRUPALFAC001
+name: postgresqlalpha
 
 restapi:
   listen: 0.0.0.0:8008
-  connect_address: LBRUPALFAC001-postgresql:8008
+  connect_address: postgresqlalpha:8008
 
 consul:
   host: consul:8500
@@ -45,7 +45,7 @@ bootstrap:
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
 #    - host test test 0.0.0.0/0 md5
 #    - host test backup 0.0.0.0/0 md5
-    - host replication backup 0.0.0.0/0 md5
+#    - host replication backup 0.0.0.0/0 md5
     - host replication replicator 0.0.0.0/0 md5
     - host all postgres 0.0.0.0/0 md5
 
@@ -66,7 +66,7 @@ bootstrap:
 
 postgresql:
   listen: 0.0.0.0:5432
-  connect_address: LBRUPALFAC001-postgresql:5432
+  connect_address: postgresqlalpha:5432
   data_dir: /var/lib/postgresql/data/PGDATA
   pgpass: /tmp/pgpass
   authentication:
