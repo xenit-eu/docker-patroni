@@ -1,15 +1,32 @@
 version: '2.2'
 
 services:
-  postgresql:
+  postgresqlalpha:
     image: ${DOCKER_IMAGE}
     volumes:
-    - postgres_data:/var/lib/postgresql/data
-    - ./config:/config
+    - postgres-alpha_data:/var/lib/postgresql/data
+    - ./config/patroni/patroni-A:/config
     ports:
-    - ${DOCKER_IP:-0.0.0.0}::5432
+    - 0.0.0.0::5432
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
+
+  postgresqlbravo:
+    image: ${DOCKER_IMAGE}
+    volumes:
+    - postgres-bravo_data:/var/lib/postgresql/data
+    - ./config/patroni/patroni-B:/config
+    ports:
+    - 0.0.0.0::5432
+    environment:
+    - PGDATA=/var/lib/postgresql/data/PGDATA
+
+  haporxy:
+    image: haproxy:2.0.5
+    volumes:
+    - ./config/haproxy:/usr/local/etc/haproxy
+    ports:
+    - 5000:5000
 
   consul:
     image: consul:1.5.3
@@ -17,4 +34,5 @@ services:
     command: agent -data-dir /consul/data -server -bootstrap -client 0.0.0.0
 
 volumes:
-  postgres_data:
+  postgres-alpha_data:
+  postgres-bravo_data:
