@@ -21,7 +21,7 @@ services:
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
 
-  haporxy:
+  haproxy:
     image: haproxy:2.0.5
     volumes:
     - ./config/haproxy:/usr/local/etc/haproxy
