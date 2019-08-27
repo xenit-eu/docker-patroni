@@ -35,7 +35,9 @@ class PostgresTest {
     void testReplication() {}
 
     @Test
-    void testPromotion() {}
+    void testPromotion() {
+
+    }
 
     @Test
     void testHighAvailability() {
