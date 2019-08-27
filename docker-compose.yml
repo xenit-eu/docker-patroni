@@ -2,7 +2,8 @@ version: '2.2'
 
 services:
   postgresqlalpha:
-    image: ${DOCKER_IMAGE}
+#    image: ${DOCKER_IMAGE}
+    image: xeniteu/postgres-patroni:local
     volumes:
     - postgres-alpha_data:/var/lib/postgresql/data
     - ./config/patroni/patroni-A:/config
@@ -12,7 +13,8 @@ services:
     - PGDATA=/var/lib/postgresql/data/PGDATA
 
   postgresqlbravo:
-    image: ${DOCKER_IMAGE}
+#    image: ${DOCKER_IMAGE}
+    image: xeniteu/postgres-patroni:local
     volumes:
     - postgres-bravo_data:/var/lib/postgresql/data
     - ./config/patroni/patroni-B:/config
@@ -27,6 +29,7 @@ services:
     - ./config/haproxy:/usr/local/etc/haproxy
     ports:
     - 5000:5000
+    - 5432:5432
 
   consul:
     image: consul:1.5.3
