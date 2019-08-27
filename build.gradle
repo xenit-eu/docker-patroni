@@ -25,13 +25,6 @@ repositories {
     maven {
         url 'https://dl.bintray.com/palantir/releases' // docker-compose-rule is published on bintray
     }
-    maven {
-        url "https://artifactory.xenit.eu/artifactory/libs-release"
-        credentials {
-            username property("eu.xenit.artifactory.username")
-            password property("eu.xenit.artifactory.password")
-        }
-    }
 }
 
 dependencies {
