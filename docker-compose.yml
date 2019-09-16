@@ -8,8 +8,10 @@ services:
     - ./config/patroni/patroni-A:/config
     ports:
     - 0.0.0.0::5432
+    - 0.0.0.0::8008
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
+    - PATRONI_RESTAPI_USERNAME=postgres
 
   postgresqlbravo:
     image: ${DOCKER_IMAGE}
@@ -18,8 +20,10 @@ services:
     - ./config/patroni/patroni-B:/config
     ports:
     - 0.0.0.0::5432
+    - 0.0.0.0::8008
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
+    - PATRONI_RESTAPI_USERNAME=postgres
 
   haproxy:
     image: haproxy:2.0.5
@@ -30,7 +34,6 @@ services:
 
   consul:
     image: consul:1.5.3
-#    image: hub.xenit.eu/consul
     ports:
     - 0.0.0.0::8500
     command: agent -data-dir /consul/data -server -bootstrap -ui -client 0.0.0.0
