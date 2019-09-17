@@ -23,10 +23,10 @@ bootstrap:
         max_replication_slots: 1
         wal_level: logical
         max_connections: 375
-#        shared_buffers: 2048MB
-#        work_mem: 5592kB
-#        effective_cache_size: 6144MB
-#        maintenance_work_mem: 512MB
+        #        shared_buffers: 2048MB
+        #        work_mem: 5592kB
+        #        effective_cache_size: 6144MB
+        #        maintenance_work_mem: 512MB
         default_statistics_target: 100
         max_wal_senders: 2
         min_wal_size: 1GB
@@ -43,25 +43,21 @@ bootstrap:
     - data-checksums
 
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
-#    - host test test 0.0.0.0/0 md5
-#    - host test backup 0.0.0.0/0 md5
+    #    - host test test 0.0.0.0/0 md5
+    #    - host test backup 0.0.0.0/0 md5
+    - host all alfresco 0.0.0.0/0 trust #md5
     - host replication replicator 0.0.0.0/0 md5
     - host all postgres 0.0.0.0/0 md5
 
   # Some additional users users which needs to be created after initializing new cluster
-#  users:
-#    test:
-#      password: test
-#      options:
-#        - createdb
-#    backup:
-#      password: backup
-#      options:
-#        - superuser
-#        - replication
+  #Users comes after post_init, so its useless for creating a user+db at startup
+  #  users:
+  #    alfresco:
+  #      password: admin
+  #      options:
+  #        - createdb
 
-# Does not get called?
-# post_init: /post_init.py
+  post_init: /startup/alf_db_init.sh
 
 postgresql:
   listen: 0.0.0.0:5432
@@ -79,7 +75,7 @@ postgresql:
     unix_socket_directories: '.'
     shared_preload_libraries: pg_stat_statements
 tags:
-    nofailover: false
-    noloadbalance: false
-    clonefrom: false
-    nosync: false
+  nofailover: false
+  noloadbalance: false
+  clonefrom: false
+  nosync: false

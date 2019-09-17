@@ -31,7 +31,8 @@ import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 task createDockerFile(type: Dockerfile){
     from "xeniteu/postgres:${pg_version}"
     copyFile    'docker-entrypoint.sh', '/'
-    runCommand  "apt-get update && apt-get install -y python3-pip python3-dev g++ curl musl-dev postgresql-server-dev-10 postgresql-common gosu && " +
+    copyFile    'alf_db_init.sh', '/startup/'
+    runCommand  "apt-get update && apt-get install -y python3-pip python3-dev g++ curl musl-dev postgresql-server-dev-10 postgresql-common postgresql-client gosu && " +
                 "ln -sf /usr/bin/python3 /usr/bin/python && " +
                 "rm -r /usr/lib/python*/ensurepip && " +
                 "python3 -m pip install --upgrade pip setuptools && " +
@@ -47,12 +48,18 @@ task createDockerFile(type: Dockerfile){
                 "rm -r /root/.cache && " +
                 "rm -rf /usr/lib/python3*/__pycache && " +
                 "apt-get remove -y g++ python3-dev curl musl-dev && apt autoremove -y && apt-get purge && " +
-                'chmod +x /docker-entrypoint.sh'
+                'chmod +x /docker-entrypoint.sh &&' +
+                'chmod +x /startup/alf_db_init.sh'
     entryPoint  '/docker-entrypoint.sh'
 }
 
 task copyEntrypoint(type: Copy){
     from 'docker-entrypoint.sh'
+    into createDockerFile.destFile.parent
+}
+
+task copyDbPostInit(type: Copy){
+    from './config/postgres/alf_db_init.sh'
     into createDockerFile.destFile.parent
 }
 
@@ -80,6 +87,7 @@ docker {
 afterEvaluate {
     buildDockerImage.dependsOn(createDockerFile)
     buildDockerImage.dependsOn(copyEntrypoint)
+    buildDockerImage.dependsOn(copyDbPostInit)
 }
 
 test {
