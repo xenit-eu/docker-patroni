@@ -69,7 +69,6 @@ dockerFile {
         repository = 'xeniteu/postgres-patroni'
         tags = ["${pg_version}-patroni-${patroni_version}"]
         automaticTags = false
-        automaticTags = true
     }
 }
 
