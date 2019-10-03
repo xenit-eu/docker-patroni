@@ -66,7 +66,7 @@ task copyDbPostInit(type: Copy){
 dockerFile {
     dockerFile = createDockerFile.destFile
     dockerBuild {
-        repository = 'xeniteu/postgres-patroni'
+        repository = 'xenit/postgres-patroni'
         tags = ["${pg_version}-patroni-${patroni_version}"]
         automaticTags = false
     }
