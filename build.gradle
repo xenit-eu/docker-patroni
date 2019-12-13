@@ -1,6 +1,5 @@
 plugins {
-    id 'eu.xenit.docker' version '4.1.1'
-    // id 'eu.xenit.docker' version '4.0.3'    
+    id 'eu.xenit.docker' version '4.1.1' 
 }
 
 group 'eu.xenit.postgres'
