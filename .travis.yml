@@ -4,9 +4,6 @@ addons:
     packages:
       - docker-ce
 
-jdk:
-  - oraclejdk8
-
 services:
   - docker
 
