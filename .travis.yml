@@ -1,15 +1,13 @@
 language: java
-addons:
-  apt:
-    packages:
-      - docker-ce
-
 services:
   - docker
-
-script:
-  - ./gradlew test -i -PbuildNumber="$TRAVIS_BUILD_NUMBER" -PgitBranch="$TRAVIS_BRANCH"
-  - if [ "$TRAVIS_BRANCH" = "master" ]; then ./gradlew pushDockerImage; fi
+jobs:
+  include:
+    - stage: test
+      script: ./gradlew check -i
+    - stage: Push docker images
+      if: branch = release && type != pull_request
+      script: ./gradlew pushDockerImage -i
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
