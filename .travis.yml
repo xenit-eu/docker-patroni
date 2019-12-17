@@ -3,16 +3,8 @@ services:
   - docker
 jobs:
   include:
-    - stage: test
+    - stage: Test
       script: ./gradlew check -i
     - stage: Push docker images
       if: branch = release && type != pull_request
       script: ./gradlew pushDockerImage -i
-
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
