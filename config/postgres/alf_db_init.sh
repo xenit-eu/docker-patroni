@@ -1,2 +1,0 @@
-#!/bin/bash
-(echo "CREATE USER ${DB_USERNAME:-alfresco} WITH PASSWORD '${DB_PASSWORD:-admin}'; CREATE DATABASE alfresco WITH OWNER=${DB_USERNAME:-alfresco}; GRANT ALL PRIVILEGES ON DATABASE alfresco TO ${DB_USERNAME:-alfresco};") | psql -Xd $1

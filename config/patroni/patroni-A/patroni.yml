@@ -44,20 +44,8 @@ bootstrap:
     #    - host test test 0.0.0.0/0 md5
     #    - host test backup 0.0.0.0/0 md5
     #    - host replication backup 0.0.0.0/0 md5
-    - host all alfresco 0.0.0.0/0 trust #md5
     - host replication replicator 0.0.0.0/0 md5
     - host all postgres 0.0.0.0/0 md5
-
-  #Users comes after post_init, so its useless for creating a user+db at startup
-  #  users:
-  #    alfresco:
-  #      password: admin
-  #      options:
-  #        - createdb
-  post_init: /startup/alf_db_init.sh
-
-# Does not get called?
-# post_init: /post_init.py
 
 postgresql:
   listen: 0.0.0.0:5432
