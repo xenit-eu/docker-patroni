@@ -13,7 +13,7 @@ wrapper {
 apply plugin: 'java'
 
 def junit_version = "5.5.1"
-def pg_version = "11.5"
+def pg_version = "11.6"
 def patroni_version = '1.6.3'
 
 dependencies {
