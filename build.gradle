@@ -45,7 +45,8 @@ task createDockerFile(type: DockerfileWithCopyTask){
                 "apt-get remove -y g++ curl python3-dev && apt-get autoremove -y && apt-get purge"    
     entryPoint  '/docker-entrypoint.sh'
     smartCopy   'docker-entrypoint.sh', '/'
-    runCommand  'chmod +x /docker-entrypoint.sh'
+    smartCopy   'backup-fetch.sh','/usr/bin'
+    runCommand  'chmod +x /docker-entrypoint.sh /usr/bin/backup-fetch.sh'
 }
 
 dockerFile {
