@@ -1,20 +1,23 @@
 plugins {
-    id 'eu.xenit.docker' version '4.1.1' 
+    id 'eu.xenit.docker' version '5.0.6' 
+    id "eu.xenit.docker-compose" version '5.0.6'
 }
 
 group 'eu.xenit.postgres'
 version '0.1.0'
 
 wrapper {
-    version = '5.5'
+    version = '5.6.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 apply plugin: 'java'
+apply plugin: "eu.xenit.docker"
+apply plugin: "eu.xenit.docker-compose"
 
 def junit_version = "5.5.1"
-def pg_version = "11.6"
-def patroni_version = '1.6.3'
+def pg_version = "11.7"
+def patroni_version = '1.6.5'
 
 dependencies {
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
@@ -26,12 +29,11 @@ dependencies {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-import eu.xenit.gradle.tasks.DockerfileWithCopyTask
+import eu.xenit.gradle.docker.tasks.DockerfileWithCopyTask
 task createDockerFile(type: DockerfileWithCopyTask){
     from "xenit/postgres:${pg_version}"
     runCommand  "apt-get update && apt-get install -y python3-pip python3-psycopg2 python3-dev g++ curl gosu && " +
                 "ln -sf /usr/bin/python3 /usr/bin/python && " +
-                "rm -r /usr/lib/python*/ensurepip && " +
                 "python3 -m pip install --upgrade pip setuptools && " +
                 "python3 -m pip install pyyaml python-dateutil pytz requests python-consul click tzlocal prettytable psutil cdiff && " +
                 "cd /tmp && curl -OL https://github.com/zalando/patroni/archive/v${patroni_version}.tar.gz && " +
