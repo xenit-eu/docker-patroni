@@ -1,15 +1,15 @@
 plugins {
     id 'java'
-    id 'eu.xenit.docker' version '5.0.6' 
-    id "eu.xenit.docker-compose" version '5.0.6'
+    id 'eu.xenit.docker' version '5.2.0'
+    id "eu.xenit.docker-compose" version '5.2.0'
 }
 
 group 'eu.xenit.postgres'
 version '0.1.0'
 
-def junit_version = "5.5.1"
-def pg_version = "11.8"
-def patroni_version = '1.6.5'
+def junit_version = "5.7.1"
+def pg_version = "11.11"
+def patroni_version = '2.0.2'
 
 repositories {
     mavenCentral()
@@ -17,16 +17,15 @@ repositories {
 
 dependencies {
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
-    testCompile group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
+    testCompile group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junit_version}")
     testRuntime("org.junit.vintage:junit-vintage-engine:${junit_version}")
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
-import eu.xenit.gradle.docker.tasks.DockerfileWithCopyTask
-task createDockerFile(type: DockerfileWithCopyTask){
+createDockerFile {
     from "xenit/postgres:${pg_version}"
     runCommand  "apt-get update && apt-get install -y python3-pip python3-psycopg2 python3-dev g++ curl gosu && " +
                 "ln -sf /usr/bin/python3 /usr/bin/python && " +
