@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'eu.xenit.docker' version '5.2.0'
-    id "eu.xenit.docker-compose" version '5.2.0'
+    id 'eu.xenit.docker' version '5.3.0'
+    id "eu.xenit.docker-compose" version '5.3.0'
 }
 
 group 'eu.xenit.postgres'
@@ -16,10 +16,10 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
-    testCompile group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junit_version}")
-    testRuntime("org.junit.vintage:junit-vintage-engine:${junit_version}")
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+    testImplementation "org.postgresql:postgresql:42.2.19"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_version}"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
