@@ -8,7 +8,7 @@ group 'eu.xenit.postgres'
 version '0.1.0'
 
 def junit_version = "5.7.1"
-def pg_version = "11.12"
+def pg_version = "12.7"
 def patroni_version = '2.0.2'
 
 repositories {
@@ -40,10 +40,9 @@ createDockerFile {
                 "rm -rf /tmp/patroni-* /tmp/*.tar.gz  && " +
                 "rm -rf /root/.cache /usr/lib/python3*/__pycache && " +
                 "apt-get remove -y g++ curl python3-dev && apt-get autoremove -y && apt-get purge"    
+    smartCopy   'src/main/docker/root', '/'
+    runCommand  "mkdir /post-init"
     entryPoint  '/docker-entrypoint.sh'
-    smartCopy   'docker-entrypoint.sh', '/'
-    smartCopy   'backup-fetch.sh','/usr/bin'
-    runCommand  'chmod +x /docker-entrypoint.sh /usr/bin/backup-fetch.sh'
 }
 
 dockerFile {

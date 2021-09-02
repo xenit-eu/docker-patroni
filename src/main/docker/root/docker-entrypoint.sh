@@ -18,4 +18,4 @@ fi
 mkdir --parents /root/.config/patroni
 ln -s /config/patronictl.yaml /root/.config/patroni/patronictl.yaml
 
-exec gosu postgres /patroni.py /config/patroni.yml
+exec gosu postgres /patroni.py /config/patroni
