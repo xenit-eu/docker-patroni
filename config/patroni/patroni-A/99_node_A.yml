@@ -1,9 +1,0 @@
-scope: alfdb
-name: postgresqlalpha
-
-restapi:
-  connect_address: postgresqlalpha:8008
-
-postgresql:
-  connect_address: postgresqlalpha:5432
-
