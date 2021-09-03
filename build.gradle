@@ -7,19 +7,19 @@ def junit_version = "5.7.1"
 
 project(':11') {
     project.ext {
-        pg_version = '11.12'
+        pg_version = '11.13'
     }
 }
 
 project(':12') {
     project.ext {
-        pg_version = '12.7'
+        pg_version = '12.8'
     }
 }
 
 project(':13') {
     project.ext {
-        pg_version = '13.3'
+        pg_version = '13.4'
     }
 }
 
