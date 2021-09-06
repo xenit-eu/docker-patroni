@@ -23,7 +23,7 @@ Following configuration parameters should be set by the user of this image via e
 
 #### Config file
 
-This image can also be configured with the complete configuration in a config file /config/patroni.yaml. If this option is used directory /config/patroni should not exist.
+This image can also be configured with the complete configuration in a config file /config/patroni.yml. If this file exists directory /config/patroni is not used.
 
 ### patronictl
 
