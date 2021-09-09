@@ -2,7 +2,7 @@
 
 - [X] Update components
 - [X] Add license
-- [ ] Update README
+- [x] Update README
 - [X] Extend with High Availability setup
 - [ ] Add tests for the features to be used in production
 
@@ -27,7 +27,7 @@ This image can also be configured with the complete configuration in a config fi
 
 ### patronictl
 
-This image expects a patronictl.yaml in /config
+patronictl.yaml is no longer needed.
 
 ## Customisation
 

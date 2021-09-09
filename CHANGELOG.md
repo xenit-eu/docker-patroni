@@ -10,4 +10,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [XENOPS-882] Use Patroni configuration directory instead of configuration file (config file is still possible)
 * [XENOPS-882] Support for post-init scripts
 * [XENOPS-882] build for multiple versions of postgres
+* [XENOPS-882] remove patronictl.yaml
 
