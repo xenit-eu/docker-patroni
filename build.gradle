@@ -1,83 +1,112 @@
 plugins {
-    id 'java'
-    id 'eu.xenit.docker' version '5.3.0'
-    id "eu.xenit.docker-compose" version '5.3.0'
+    id 'eu.xenit.docker' version '5.3.0' apply false
 }
 
-group 'eu.xenit.postgres'
-version '0.1.0'
-
+def patroni_version = '2.1.1'
 def junit_version = "5.7.1"
-def pg_version = "11.12"
-def patroni_version = '2.0.2'
 
-repositories {
-    mavenCentral()
+project(':11') {
+    project.ext {
+        pg_version = '11.13'
+    }
 }
 
-dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
-    testImplementation "org.postgresql:postgresql:42.2.19"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_version}"
+project(':12') {
+    project.ext {
+        pg_version = '12.8'
+    }
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
-createDockerFile {
-    from "xenit/postgres:${pg_version}"
-    runCommand  "apt-get update && apt-get install -y python3-pip python3-psycopg2 python3-dev g++ curl gosu && " +
-                "ln -sf /usr/bin/python3 /usr/bin/python && " +
-                "python3 -m pip install --upgrade pip setuptools && " +
-                "python3 -m pip install pyyaml python-dateutil pytz requests python-consul click tzlocal prettytable psutil cdiff && " +
-                "cd /tmp && curl -OL https://github.com/zalando/patroni/archive/v${patroni_version}.tar.gz && " +
-                "tar -xzf v${patroni_version}.tar.gz && " +
-                "mv patroni-${patroni_version}/patroni /patroni && " +
-                "mv patroni-${patroni_version}/patroni.py / && " +
-                "mv patroni-${patroni_version}/patronictl.py / && " +
-                "ln -s /patronictl.py /usr/local/bin/patronictl && " +
-                "rm -rf /tmp/patroni-* /tmp/*.tar.gz  && " +
-                "rm -rf /root/.cache /usr/lib/python3*/__pycache && " +
-                "apt-get remove -y g++ curl python3-dev && apt-get autoremove -y && apt-get purge"    
-    entryPoint  '/docker-entrypoint.sh'
-    smartCopy   'docker-entrypoint.sh', '/'
-    smartCopy   'backup-fetch.sh','/usr/bin'
-    runCommand  'chmod +x /docker-entrypoint.sh /usr/bin/backup-fetch.sh'
+project(':13') {
+    project.ext {
+        pg_version = '13.4'
+    }
 }
 
-dockerFile {
-    dockerFile = createDockerFile.destFile.get().getAsFile()
+subprojects {
+
+    project.projectDir.mkdir()
+
+    apply plugin: 'eu.xenit.docker'
+    apply plugin: 'eu.xenit.docker-compose'
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+        testImplementation "org.postgresql:postgresql:42.2.19"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+        testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_version}"
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    createDockerFile {
+        from "xenit/postgres:${project.pg_version}"
+        runCommand  "apt-get update && apt-get install -y python3-pip python3-psycopg2 python3-dev g++ curl gosu && " +
+                    "ln -sf /usr/bin/python3 /usr/bin/python && " +
+                    "python3 -m pip install --upgrade pip setuptools && " +
+                    "python3 -m pip install pyyaml python-dateutil pytz requests python-consul click tzlocal prettytable psutil cdiff && " +
+                    "cd /tmp && curl -OL https://github.com/zalando/patroni/archive/v${patroni_version}.tar.gz && " +
+                    "tar -xzf v${patroni_version}.tar.gz && " +
+                    "mv patroni-${patroni_version}/patroni /patroni && " +
+                    "mv patroni-${patroni_version}/patroni.py / && " +
+                    "mv patroni-${patroni_version}/patronictl.py / && " +
+                    "ln -s /patronictl.py /usr/local/bin/patronictl && " +
+                    "mkdir /post-init && " +
+                    "rm -rf /tmp/patroni-* /tmp/*.tar.gz  && " +
+                    "rm -rf /root/.cache /usr/lib/python3*/__pycache && " +
+                    "apt-get remove -y g++ curl python3-dev && apt-get autoremove -y && apt-get purge"    
+        smartCopy   "$project.parent.projectDir/src/main/docker/root", '/'
+        entryPoint  '/docker-entrypoint.sh'
+    }
+
     dockerBuild {
-        repository = 'xenit/postgres-patroni'
-        tags = ["${pg_version}-patroni-${patroni_version}"]
-        automaticTags = false
+        repositories = ['xenit/postgres-patroni']
+        tags = ["${project.pg_version}-patroni-${patroni_version}"]
     }
-}
 
-docker {
-    if (System.getenv("DOCKER_USER") != null) {
-        registryCredentials {
-            username = System.getenv("DOCKER_USER")
-            password = System.getenv("DOCKER_PASSWORD")
+    docker {
+        if (System.getenv("DOCKER_USER") != null) {
+            registryCredentials {
+                username = System.getenv("DOCKER_USER")
+                password = System.getenv("DOCKER_PASSWORD")
+            }
+        } else {
+            logger.info "using default credentials"
         }
-    } else {
-        logger.info "using default credentials"
     }
-}
 
-buildDockerImage.dependsOn(createDockerFile)
+    buildDockerImage.dependsOn(createDockerFile)
 
-test {
-    dependsOn composeUp
-    useJUnitPlatform()
-    outputs.upToDateWhen { false }
-    doFirst {
-        def ipAddress = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getHost()
-        def port = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getPorts().getAt(5432)
-        systemProperty("connectionString", "jdbc:postgresql://${ipAddress}:${port}/postgres")
-        systemProperty("postgres.username", "postgres")
-        systemProperty("postgres.password", "postgres")
+    dockerCompose {
+        useComposeFiles = ["$project.parent.projectDir/src/main/compose/docker-compose.yml"]
     }
-    finalizedBy(composeDown)
+
+    sourceSets {
+        test {
+            java {
+                srcDirs "$project.parent.projectDir/src/test/java"
+            }
+        }
+    }
+
+    test {
+        dependsOn composeUp
+        useJUnitPlatform()
+        outputs.upToDateWhen { false }
+        doFirst {
+            def ipAddress = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getHost()
+            def port = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getPorts().getAt(5432)
+            systemProperty("connectionString", "jdbc:postgresql://${ipAddress}:${port}/postgres")
+            systemProperty("postgres.username", "postgres")
+            systemProperty("postgres.password", "postgres")
+        }
+        finalizedBy(composeDown)
+    }
+
 }

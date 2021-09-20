@@ -5,23 +5,29 @@ services:
     image: ${DOCKER_IMAGE}
     volumes:
     - postgres-alpha_data:/var/lib/postgresql/data
-    - ./config/patroni/patroni-A:/config
     ports:
     - 0.0.0.0::5432
     - 0.0.0.0::8008
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
+    - PATRONI_NAME=postgresqlalpha
+    - PATRONI_SCOPE=alfdb
+    - PATRONI_POSTGRESQL_CONNECT_ADDRESS=postgresqlalpha:5432
+    - PATRONI_RESTAPI_CONNECT_ADDRESS=postgresqlalpha:8008
 
   postgresqlbravo:
     image: ${DOCKER_IMAGE}
     volumes:
     - postgres-bravo_data:/var/lib/postgresql/data
-    - ./config/patroni/patroni-B:/config
     ports:
     - 0.0.0.0::5432
     - 0.0.0.0::8008
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
+    - PATRONI_NAME=postgresqlbravo
+    - PATRONI_SCOPE=alfdb
+    - PATRONI_POSTGRESQL_CONNECT_ADDRESS=postgresqlbravo:5432
+    - PATRONI_RESTAPI_CONNECT_ADDRESS=postgresqlbravo:8008
 
   haproxy:
     image: haproxy:2.0.5

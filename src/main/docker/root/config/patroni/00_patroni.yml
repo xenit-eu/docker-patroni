@@ -1,9 +1,5 @@
-scope: alfdb
-name: postgresqlalpha
-
 restapi:
   listen: 0.0.0.0:8008
-  connect_address: postgresqlalpha:8008
 
 consul:
   host: consul:8500
@@ -37,19 +33,19 @@ bootstrap:
         lc_monetary: en_US.utf8
         lc_numeric: en_US.utf8
         lc_time: en_US.utf8
+
   initdb:  # Note: It needs to be a list (some options need values, others are switches)
     - encoding: UTF8
     - data-checksums
+
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
-    #    - host test test 0.0.0.0/0 md5
-    #    - host test backup 0.0.0.0/0 md5
-    #    - host replication backup 0.0.0.0/0 md5
     - host replication replicator 0.0.0.0/0 md5
     - host all postgres 0.0.0.0/0 md5
 
+  post_init: /post-init.sh
+
 postgresql:
   listen: 0.0.0.0:5432
-  connect_address: postgresqlalpha:5432
   data_dir: /var/lib/postgresql/data/PGDATA
   pgpass: /tmp/pgpass
   authentication:
@@ -62,6 +58,7 @@ postgresql:
   parameters:
     unix_socket_directories: '.'
     shared_preload_libraries: pg_stat_statements
+
 tags:
   nofailover: false
   noloadbalance: false
