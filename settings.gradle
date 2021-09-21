@@ -1,2 +1,3 @@
 rootProject.name = 'patroni'
 
+include '11', '12', '13'

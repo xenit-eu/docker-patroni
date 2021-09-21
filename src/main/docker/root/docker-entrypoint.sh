@@ -18,4 +18,13 @@ fi
 mkdir --parents /root/.config/patroni
 ln -s /config/patronictl.yaml /root/.config/patroni/patronictl.yaml
 
-exec gosu postgres /patroni.py /config/patroni.yml
+
+if [[ -f "/config/patroni.yml" ]]; then
+  exec gosu postgres /patroni.py /config/patroni.yml
+elif [[ -d "/config/patroni" ]]; then
+  exec gosu postgres /patroni.py /config/patroni
+else
+  echo "ERROR - either config directory /config/patroni or config file /config/patroni.yml should exist"
+  exit 1
+fi
+
