@@ -1,5 +1,7 @@
 #!/bin/bash
 
+/pre-start.sh
+
 if [[ ! -d "$PGDATA" ]]
 then
   mkdir -p "$PGDATA"
