@@ -46,7 +46,7 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_11
 
     createDockerFile {
-        from "postgres:${project.pg_version}"
+        from "xenit/postgres:${project.pg_version}"
         runCommand  "apt-get update && apt-get install -y python3-pip python3-psycopg2 python3-dev g++ curl gosu && " +
                     "ln -sf /usr/bin/python3 /usr/bin/python && " +
                     "python3 -m pip install --upgrade pip setuptools && " +
